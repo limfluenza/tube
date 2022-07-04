@@ -1,48 +1,25 @@
 import express from "express";
+import morgan from "morgan";
 
 const PORT = 4000;
 
 const app = express();
+const logger = morgan("dev");
 
-const date = new Date();
-
-const logger = (req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
+const home = (req, res) => {
+  console.log("I will respond.");
+  return res.send("hello");
 };
 
-const timeLogger = (req, res, next) => {
-  console.log(date);
-  next();
-};
-
-const securityLogger = (req, res, next) => {
-  const protocols = req.protocol;
-  if (protocols === "http") {
-    console.log("insecure");
-  } else console.log("secure");
-  next();
-};
-
-const privateMiddleware = (req, res, next) => {
-  const url = req.url;
-  if (url === "/protected") {
-    return res.send("<h1>Not Allowed</h1>");
-  }
-  next();
-};
-
-const handleHome = (req, res, next) => {
-  return res.send("<h1> Homepage </h1>");
+const login = (req, res) => {
+  return res.send("login");
 };
 
 app.use(logger);
-app.use(timeLogger);
-app.use(securityLogger);
-app.use(privateMiddleware);
-app.get("/", handleHome);
+app.get("/", home);
+app.get("/login", login);
 
 const handleListening = () =>
-  console.log(`Server listenting on port http://localhost${PORT} `);
+  console.log(` Server listenting on port http://localhost:${PORT}`);
 
-app.listen(4000, handleListening);
+app.listen(PORT, handleListening);
